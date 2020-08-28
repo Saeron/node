@@ -1,0 +1,1 @@
+- Falta installar dotenv y usarlo para setear las variables.
