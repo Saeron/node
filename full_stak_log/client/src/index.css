@@ -11,3 +11,7 @@ body {
 .marker {
   stroke: yellowgreen;
 }
+
+.popup {
+  max-width: 300px;
+}
