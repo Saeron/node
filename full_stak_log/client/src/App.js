@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import LogEntryForm from './LogEntryForm';
 
 import { listLogEntries } from "./API";
 
@@ -16,11 +17,13 @@ const App = () => {
     zoom: 4,
   });
 
-  useEffect(() => {
-    (async () => {
-      const logEntries = await listLogEntries();
+  const getEntries = async () => {
+    const logEntries = await listLogEntries();
       setLogEntries(logEntries);
-    })();
+  };
+
+  useEffect(() => {
+    getEntries();
   }, []);
 
   const showAddMarkerPopup = (event) => {
@@ -40,9 +43,8 @@ const App = () => {
       onDblClick={showAddMarkerPopup}
     >
       {logEntries.map((entry) => (
-        <>
+        <React.Fragment key={entry._id}>
           <Marker
-            key={entry._id}
             latitude={entry.latitude}
             longitude={entry.longitude}
             offsetLeft={-12}
@@ -87,10 +89,11 @@ const App = () => {
                 <small>
                   Visited on : {new Date(entry.visitDate).toLocaleDateString()}
                 </small>
+                {entry.image && <img src={entry.image} alt={entry.title}/>}
               </div>
             </Popup>
           ) : null}
-        </>
+        </React.Fragment>
       ))}
       {addEntryLocation ? (
         <>
@@ -127,7 +130,12 @@ const App = () => {
             anchor="top"
           >
             <div className="popup">
-              <h3>Add your new log entry:</h3>
+              <LogEntryForm onClose={
+                () => {
+                  setAddEntryLocation(null)
+                  getEntries();
+                }
+              } location={addEntryLocation}/>
             </div>
           </Popup>
         </>
