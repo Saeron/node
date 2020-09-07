@@ -38,9 +38,10 @@ router.post('/signup', (req, res, next ) => {
         }).then( user => {
             if(user) {
                 const error = new Error("That user is already on db.");
+                res.status(500);
                 next(error);
             }else{
-                bcrypt.hash(req.body.password, 12).then(
+                bcrypt.hash(req.body.password.trim(), 12).then(
                     hashPass => {
                       const newUser = {
                           username: req.body.username,
@@ -54,6 +55,7 @@ router.post('/signup', (req, res, next ) => {
             }
         });
     }else {
+        res.status(406);
         next(result.error);
     }
 });

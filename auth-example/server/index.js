@@ -1,12 +1,17 @@
 // https://www.youtube.com/watch?v=S2LeHnj5GbU
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
+
 
 const app = express();
 
 const auth = require('./auth/index');
 
 app.use(morgan('dev'));
+app.use(cors({
+    origin: 'http://localhost:8080'
+}));
 app.use(express.json());
 
 app.get('/' ,(req, res ) => {
