@@ -1,10 +1,13 @@
 <template>
   <section>
     <h1>Signup</h1>
+      <div v-if="signingUp" class="text-center">
+        <img src= '../assets/Gear.svg'/>
+      </div>
       <div v-if="errorMessage" class="alert alert-danger" role="alert">
         {{ errorMessage }}
       </div>
-    <form @submit.prevent="signup">
+    <form v-if="!signingUp" @submit.prevent="signup">
       <div class='form-group'>
         <label for='username'>Username</label>
         <input
@@ -79,6 +82,7 @@ const schema = Joi.object({
 
 export default {
   data: () => ({
+    signingUp: false,
     errorMessage: '',
     user: {
       username: '',
@@ -102,7 +106,7 @@ export default {
           username: this.user.username,
           password: this.user.password,
         };
-
+        this.signingUp = true;
         fetch(SIGNUP_URL, {
           method: 'POST',
           body: JSON.stringify(body),
@@ -116,10 +120,16 @@ export default {
           return response.json().then((error) => {
             throw new Error(error.message);
           });
-        }).then((user) => {
-          console.log(user);
+        }).then(() => {
+          setTimeout(() => {
+            this.signingUp = false;
+            this.$router.push('/login');
+          }, 1000);
         }).catch((error) => {
-          this.errorMessage = error.message;
+          setTimeout(() => {
+            this.signingUp = false;
+            this.errorMessage = error.message;
+          }, 1000);
         });
       }
     },

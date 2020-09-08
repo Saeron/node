@@ -1,7 +1,9 @@
-// https://www.youtube.com/watch?v=S2LeHnj5GbU
+// https://www.youtube.com/watch?v=Hh0ntwzlqKs
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+
+require('dotenv').config();
 
 
 const app = express();
