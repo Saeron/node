@@ -1,4 +1,4 @@
-// https://www.youtube.com/watch?v=yu2wSuHUQcE
+// https://www.youtube.com/watch?v=TNEHNgunHn4
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -7,6 +7,8 @@ require('dotenv').config();
 
 const app = express();
 
+const middleware = require('./auth/middlewares');
+
 const auth = require('./auth/index');
 
 app.use(morgan('dev'));
@@ -14,10 +16,12 @@ app.use(cors({
     origin: 'http://localhost:8080'
 }));
 app.use(express.json());
+app.use(middleware.checkTokenSetUser);
 
 app.get('/' ,(req, res ) => {
     res.json({
-        message: 'Hello world.'
+        message: 'Hello world.',
+        user: req.user
     });
 });
 
