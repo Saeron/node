@@ -102,10 +102,10 @@ export default {
             throw new Error(error.message);
           });
         }).then((result) => {
-          console.log(result);
+          localStorage.token = result.token;
           setTimeout(() => {
             this.logginIn = false;
-            // this.$router.push('/dashboard');
+            this.$router.push('/dashboard');
           }, 1000);
         }).catch((error) => {
           setTimeout(() => {

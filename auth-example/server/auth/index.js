@@ -18,6 +18,23 @@ const schema = Joi.object({
     .required(),
 });
 
+function createTokenSendRespond(user, res, next) {
+  const payload = {
+    _id: user._id,
+    username: user.username
+  };
+  jwt.sign(payload, process.env.TOKEN_SECRET,{
+      expiresIn: '1d'
+  }, (err, token) =>{
+      if (err) {
+        respondError422(res, next);
+      } else {
+          res.json({token});
+      }
+  });
+  
+}
+
 router.get("/", (req, res) => {
   res.json({
     message: "authentication service",
@@ -43,8 +60,9 @@ router.post("/signup", (req, res, next) => {
               password: hashPass,
             };
             users.insert(newUser).then((insertUser) => {
-              delete insertUser.password;
-              res.json(insertUser);
+              // delete insertUser.password;
+              // res.json(insertUser);
+              createTokenSendRespond(insertUser, res ,next)
             });
           });
         }
@@ -73,19 +91,7 @@ router.post("/login", (req, res, next) => {
         if (user) {
           bcrypt.compare(req.body.password, user.password).then((result) => {
             if (result) {
-              const payload = {
-                _id: user._id,
-                username: user.username
-              };
-              jwt.sign(payload, process.env.TOKEN_SECRET,{
-                  expiresIn: '1d'
-              }, (err, token) =>{
-                  if (err) {
-                    respondError422(res, next);
-                  } else {
-                      res.json({token});
-                  }
-              });
+              createTokenSendRespond(user,res,next);
             } else {
               respondError422(res, next);
             }
