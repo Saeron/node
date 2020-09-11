@@ -47,9 +47,7 @@
         <div class='card border-info mb-3'>
         <div class='card-header'>{{note.title}}</div>
           <div class='card-body'>
-            <p class='card-text'>
-              {{note.note}}
-            </p>
+            <p class='card-text' v-html="renderMarkdown(note.note)"/>
           </div>
         </div>
       </div>
@@ -58,6 +56,9 @@
 </template>
 
 <script>
+const MarkdownIt = require('markdown-it');
+
+const md = new MarkdownIt();
 const API_URL = 'http://localhost:5000';
 export default {
   data: () => ({
@@ -86,6 +87,9 @@ export default {
       });
   },
   methods: {
+    renderMarkdown(note) {
+      return md.render(note);
+    },
     getNotes() {
       fetch(`${API_URL}/api/v1/notes`, {
         headers: {
@@ -112,7 +116,7 @@ export default {
       })
         .then((res) => res.json())
         .then((note) => {
-          console.log(note);
+          this.notes.push(note);
           this.newNote = {
             title: '',
             note: '',
@@ -125,4 +129,10 @@ export default {
 </script>
 
 <style>
+.card {
+  height: 95%;
+}
+.card-text img {
+  width: 100%;
+}
 </style>
