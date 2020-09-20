@@ -39,7 +39,7 @@
     <div class="hero-foot">
         <div class="container hero-footer">
             <p class="content has-text-primary">
-                Contacto: antdcs@gmail.com
+                Contact: antdcs@gmail.com
             </p>
         </div>
     </div>
