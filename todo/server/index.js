@@ -2,23 +2,26 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
 
-
-
 const TaskEntry = require("./models/task");
+const ListEntry = require("./models/listTasks");
 
 mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+  })
+);
 app.use(morgan("common"));
 app.use(express.json());
 
@@ -30,7 +33,6 @@ app.get("/", (req, res) => {
 
 app.post("/create", async (req, res, next) => {
   try {
-    console.log(req.body);
     const taskEntry = new TaskEntry(req.body);
     const createdEntry = await taskEntry.save();
     res.json(createdEntry);
@@ -41,13 +43,15 @@ app.post("/create", async (req, res, next) => {
 
 app.post("/update", async (req, res, next) => {
   try {
-    console.log(req.body);
-    const taskEntry = await TaskEntry.updateOne({
-      _id: req.body._id
-    },{
-      finalizedAt: new Date(req.body.finalizedAt)
-    });
-    req.body.finalizedAt = req.body.finalizedAt
+    const taskEntry = await TaskEntry.updateOne(
+      {
+        _id: req.body._id,
+      },
+      {
+        finalizedAt: new Date(req.body.finalizedAt),
+      }
+    );
+    req.body.finalizedAt = req.body.finalizedAt;
     res.json(req.body);
   } catch (error) {
     next(error);
@@ -61,6 +65,20 @@ app.get("/list", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+app.get("/listv2", async (req, res, next) => {
+  if (!req.body.uuid) {
+    req.body.uuid = uuidv4();
+  } 
+  try {
+    const listEntry = new ListEntry(req.body);
+    const createdEntry = await listEntry.save();
+    res.json(createdEntry);
+    console.log(createdEntry.tasks)
+  } catch (error) {
+    next(error);
+  }
+
 });
 
 const port = process.env.PORT || 5000;
