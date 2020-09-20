@@ -9,8 +9,8 @@
           Check List
         </h1>
         <h2 class="subtitle">A simple to do list. Made with Vue and Node.</h2>
-        <button @click="$router.push('/list') " class="button is-primary">Begin</button>
-        <button class="button ml-3 is-primary is-outlined">
+        <button @click="$router.push('/list')" class="button is-primary">Begin</button>
+        <button @click="$router.push('/info')" class="button ml-3 is-primary is-outlined">
           <span class="icon">
             <i class="fas fa-info"></i>
           </span>

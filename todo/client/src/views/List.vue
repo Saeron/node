@@ -1,7 +1,14 @@
 <template>
   <div class="container list">
-    <h1 class="title is-1">List</h1>
-    <form class="mb-5" @submit.prevent="addTask()">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/list">
+           <i class="fa-2x fas fa-check has-text-primary"></i>
+           <h1 class="title">CheckList</h1>
+        </a>
+      </div>
+    </nav>
+    <form class="mb-5 mt-3" @submit.prevent="addTask()">
       <div class="field has-addons">
         <div class="control is-expanded">
           <input v-model="newTask.task" class="input" type="text" placeholder="Enter a new task." />
@@ -11,8 +18,12 @@
         </div>
       </div>
     </form>
-    <ul v-for="item in tasks" :key="item._id">
-      <li class="block-list has-text-primary-dark has-background-primary-light">
+    <ul>
+      <li
+        v-for="item in tasks"
+        :key="item._id"
+        class="block-list has-text-primary-dark has-background-primary-light"
+      >
         {{item.task}}
         <button
           @click="finalizeTask(item)"
@@ -43,7 +54,7 @@ export default {
       })
         .then(res => res.json())
         .then(result => {
-          this.tasks = result.filter(task => task.finalizedAt==undefined);
+          this.tasks = result.filter(task => task.finalizedAt == undefined);
         });
     } catch (error) {
       console.log(error);
@@ -83,8 +94,8 @@ export default {
           .then(res => res.json())
           .then(task => {
             task.finalizedAt = new Date(task.finalizedAt);
-            this.tasks = this.tasks.filter(function(task){
-              return task._id != item._id
+            this.tasks = this.tasks.filter(function(task) {
+              return task._id != item._id;
             });
           });
       } catch (error) {
