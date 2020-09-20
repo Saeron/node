@@ -12,15 +12,12 @@ const taskSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            default: Date.now,
+            default: Date.now(),
             required: true,
         },
         finalizedAt: {
-            type: Date,
+            type: Date, 
         }
-    },
-    {
-        timestamps: true,
     },
 );
 
