@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const TaskEntry = require("./task");
+const taskSchema = require("./task");
 
 const { Schema } = mongoose;
 
@@ -11,7 +11,7 @@ const listTaskSchema = new Schema({
     required: true,
   },
   tasks: {
-    type: [TaskEntry.Schema],
+    type: [taskSchema],
     default: [],
   },
   createdAt: {

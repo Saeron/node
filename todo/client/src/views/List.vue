@@ -43,6 +43,7 @@ export default {
     newTask: {
       task: ""
     },
+    uuid: "",
     tasks: []
   }),
   mounted() {
@@ -54,7 +55,8 @@ export default {
       })
         .then(res => res.json())
         .then(result => {
-          this.tasks = result.filter(task => task.finalizedAt == undefined);
+          this.uuid = result.uuid;
+          this.tasks = result.tasks.filter(task => task.finalizedAt == undefined);
         });
     } catch (error) {
       console.log(error);
@@ -68,11 +70,14 @@ export default {
           headers: {
             "content-type": "application/json"
           },
-          body: JSON.stringify(this.newTask)
+          body: JSON.stringify({
+            task: this.newTask,
+            uuid: this.uuid,
+          })
         })
           .then(res => res.json())
-          .then(task => {
-            this.tasks.push(task);
+          .then(list => {
+            this.tasks = list;
             this.newTask = {
               task: ""
             };

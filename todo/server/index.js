@@ -33,52 +33,83 @@ app.get("/", (req, res) => {
 
 app.post("/create", async (req, res, next) => {
   try {
-    const taskEntry = new TaskEntry(req.body);
-    const createdEntry = await taskEntry.save();
-    res.json(createdEntry);
+    const entries = await ListEntry.findOne({
+      uuid: req.body.uuid,
+    }).then((list) => {
+      list.tasks.push(req.body.task);
+      res.json(list.tasks);
+      return list.save();
+    });
   } catch (error) {
     next(error);
   }
 });
 
 app.post("/update", async (req, res, next) => {
+  // "tasks.finalizedAt": new Date(req.body.finalizedAt);
+  //necesito que se creen en el array como objetos con id
   try {
-    const taskEntry = await TaskEntry.updateOne(
-      {
-        _id: req.body._id,
-      },
-      {
-        finalizedAt: new Date(req.body.finalizedAt),
-      }
-    );
-    req.body.finalizedAt = req.body.finalizedAt;
-    res.json(req.body);
+    const entries = await ListEntry.findOne({
+      uuid: req.body.uuid,
+    }).then((list) => {
+      var item = list.tasks
+        .filter((task) => {
+          return task._id == req.body._id;
+        })
+        .pop();
+      item.finalizedAt = req.body.finalizedAt;
+
+      var result = list.tasks.filter((task) => {
+        return task._id != req.body._id;
+      });
+      result.push(item);
+      res.json(item);
+      return list.save();
+    });
   } catch (error) {
     next(error);
   }
 });
 
-app.get("/list", async (req, res, next) => {
-  try {
-    const entries = await TaskEntry.find();
-    res.json(entries);
-  } catch (error) {
-    next(error);
-  }
-});
-app.get("/listv2", async (req, res, next) => {
-  if (!req.body.uuid) {
-    req.body.uuid = uuidv4();
-  } 
+// app.get("/list", async (req, res, next) => {
+//   try {
+//     const entries = await TaskEntry.find();
+//     res.json(entries);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+async function createList(req, res, next) {
+  req.body.uuid = uuidv4();
   try {
     const listEntry = new ListEntry(req.body);
     const createdEntry = await listEntry.save();
     res.json(createdEntry);
-    console.log(createdEntry.tasks)
   } catch (error) {
     next(error);
   }
+}
 
+app.get("/list", async (req, res, next) => {
+  if (!req.body.uuid) {
+    createList(req, res, next);
+  } else {
+    try {
+      const entries = await ListEntry.findOne({
+        uuid: req.body.uuid,
+      });
+      if (!entries) {
+        const error = new Error("List doesn't exits");
+        res.status(401);
+        next(error);
+      } else {
+        res.json(entries);
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
 });
 
 const port = process.env.PORT || 5000;
