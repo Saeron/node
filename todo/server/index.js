@@ -52,6 +52,11 @@ app.post("/update", async (req, res, next) => {
     const entries = await ListEntry.findOne({
       uuid: req.body.uuid,
     }).then((list) => {
+      if(!list){
+        const error = new Error("List doesn't exits");
+        res.status(401);
+        next(error);
+      }
       var item = list.tasks
         .filter((task) => {
           return task._id == req.body._id;
@@ -63,6 +68,7 @@ app.post("/update", async (req, res, next) => {
         return task._id != req.body._id;
       });
       result.push(item);
+      console.log(item);
       res.json(item);
       return list.save();
     });
@@ -91,7 +97,7 @@ async function createList(req, res, next) {
   }
 }
 
-app.get("/list", async (req, res, next) => {
+app.post("/list", async (req, res, next) => {
   if (!req.body.uuid) {
     createList(req, res, next);
   } else {
@@ -101,7 +107,10 @@ app.get("/list", async (req, res, next) => {
       });
       if (!entries) {
         const error = new Error("List doesn't exits");
-        res.status(401);
+        res.json({
+          message: "List unrechable",
+          code: 401
+        })
         next(error);
       } else {
         res.json(entries);

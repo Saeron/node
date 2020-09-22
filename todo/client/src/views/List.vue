@@ -3,8 +3,8 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/list">
-           <i class="fa-2x fas fa-check has-text-primary"></i>
-           <h1 class="title">CheckList</h1>
+          <i class="fa-2x fas fa-check has-text-primary"></i>
+          <h1 class="title">CheckList</h1>
         </a>
       </div>
     </nav>
@@ -47,16 +47,31 @@ export default {
     tasks: []
   }),
   mounted() {
+    this.uuid = this.$route.params.id;
+    const body = {
+      uuid: this.uuid
+    };
     try {
       fetch(API_URL + "list", {
+        method: "POST",
         headers: {
           "content-type": "application/json"
-        }
+        },
+        body: JSON.stringify(body)
       })
         .then(res => res.json())
         .then(result => {
+          //Find a better way to resolve this wiht error
+          if(result.code && result.code ==401){
+            this.$router.push("/");
+          }
           this.uuid = result.uuid;
-          this.tasks = result.tasks.filter(task => task.finalizedAt == undefined);
+          this.tasks = result.tasks.filter(
+            task => task.finalizedAt == undefined
+          );
+        })
+        .catch(error => {
+          console.log("adfgasdfsdfsdf", error);
         });
     } catch (error) {
       console.log(error);
@@ -72,7 +87,7 @@ export default {
           },
           body: JSON.stringify({
             task: this.newTask,
-            uuid: this.uuid,
+            uuid: this.uuid
           })
         })
           .then(res => res.json())
@@ -94,7 +109,11 @@ export default {
           headers: {
             "content-type": "application/json"
           },
-          body: JSON.stringify(item)
+          body: JSON.stringify({
+            uuid: this.uuid,
+            _id: item._id,
+            finalizedAt: new Date().getTime()
+          })
         })
           .then(res => res.json())
           .then(task => {
@@ -104,7 +123,7 @@ export default {
             });
           });
       } catch (error) {
-        console.log(error);
+        console.log(error.message);
       }
     }
   }

@@ -9,7 +9,7 @@
           Check List
         </h1>
         <h2 class="subtitle">A simple to do list. Made with Vue and Node.</h2>
-        <button @click="$router.push('/list')" class="button is-primary">Begin</button>
+        <button @click="createList()" class="button is-primary">Begin</button>
         <button @click="$router.push('/info')" class="button ml-3 is-primary is-outlined">
           <span class="icon">
             <i class="fas fa-info"></i>
@@ -34,9 +34,28 @@
 </style>
 <script>
 // @ is an alias to /src
+const API_URL = "http://localhost:5000/";
 
 export default {
+  
   methods: {
+    createList(){
+      try {
+      fetch(API_URL + "list", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(result => {
+          var uuid = result.uuid;
+          this.$router.push(`/list/${uuid}`)
+        });
+    } catch (error) {
+      console.log(error);
+    }
+    },
     redirectGithub() {
       window.location = "https://github.com/Saeron/node/tree/master/todo";
     }
