@@ -5,5 +5,6 @@ module.exports = {
     country: 'country',
     shape: 'shape',
     location: 'location',
-    address: 'address'
+    address: 'address',
+    manufacturer: 'manufacturer'
 }

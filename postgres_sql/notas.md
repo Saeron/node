@@ -58,3 +58,6 @@ module.exports = {
 - Crear tablas en up y destruir en drop.
 - Hacer migracion npx knex migrate:latest, se puede añadir en el json-config
 - Se puede hacer rollback con npx migrate:rollback
+- Crear seeds con npx knex seed:make name pero debes modificar knexfile,js primero.
+- Para guardar contraseñas de usuarios es mejor usar bcrypt, npm i bcrypt
+- Crear un js para el orden de depenmdacias de eliminar datos en las tablas.
