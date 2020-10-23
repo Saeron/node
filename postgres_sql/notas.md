@@ -61,3 +61,6 @@ module.exports = {
 - Crear seeds con npx knex seed:make name pero debes modificar knexfile,js primero.
 - Para guardar contraseñas de usuarios es mejor usar bcrypt, npm i bcrypt
 - Crear un js para el orden de depenmdacias de eliminar datos en las tablas.
+- Para crear test usamos supertest y para ejecutarlos todos un framework llamado jest:
+npm i -D supertest jest
+- El test simula una ejecucion y no usa el puerto asignado, por eso es util tener app separada.
