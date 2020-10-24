@@ -64,3 +64,5 @@ module.exports = {
 - Para crear test usamos supertest y para ejecutarlos todos un framework llamado jest:
 npm i -D supertest jest
 - El test simula una ejecucion y no usa el puerto asignado, por eso es util tener app separada.
+- Hace falta modificar docker file para que tener una seccion de test, y por lo tanto tener otra base de datos para los tests.
+- Hay que crear jest config para iniciar automaticamente esta base de datos con : npx jest --init

@@ -23,7 +23,7 @@ exports.up = async (knex) => {
         }),
         createNameTable(knex, tableNames.item_type),
         createNameTable(knex, tableNames.country),
-        createNameTable(knex, tableNames.state),
+        // createNameTable(knex, tableNames.state),
         createNameTable(knex, tableNames.shape),
         knex.schema.createTable(tableNames.inventory_location, (table) => {
             table.increments().notNullable();
@@ -33,6 +33,12 @@ exports.up = async (knex) => {
             addDefaultColumns(table);
         }),
     ]);
+    await knex.schema.createTable(tableNames.state,(table)=>{
+        table.increments().notNullable();
+        table.string('name').notNullable();
+        references(table, tableNames.country);
+        addDefaultColumns(table);
+    });
     await knex.schema.createTable(tableNames.address, (table) => {
         table.increments().notNullable();
         table.string('street_address_1', 50).notNullable();
@@ -65,8 +71,8 @@ exports.down = async (knex) => {
         tableNames.address,
         tableNames.user,
         tableNames.item_type,
-        tableNames.country,
         tableNames.state,
+        tableNames.country,
         tableNames.shape,
         tableNames.inventory_location
     ].map((tableName => knex.schema.dropTableIfExists(tableName))));

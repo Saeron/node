@@ -1,21 +1,15 @@
 const Knex = require("knex");
 const bcrypt = require('bcrypt');
 const tableNames = require('../../src/constants/tableNames');
-const orderTableNames = require('../../src/constants/orderTablenames');
 const countries = require("../../src/constants/countries");
+const spain_states = require("../../src/constants/spainStates");
 
 /**
  * @param {Knex} knex 
  */
 exports.seed = async (knex) => {
   // Deletes ALL existing entries
-  await orderTableNames
-    .reduce(async (promise, table_name) => {
-      await promise;
-      console.log('Clearing', table_name);
-      return knex(table_name).del();
-    },
-      Promise.resolve())
+  await Promise.all(Object.keys(tableNames).map((name) => knex(name).del()));
 
 
   const user = {
@@ -28,7 +22,13 @@ exports.seed = async (knex) => {
 
   console.log('Created User: ', createdUser);
 
-  await knex(tableNames.country).insert(countries);
+  const insertedCountries = await knex(tableNames.country).insert(countries, '*');
+
+  const spain = insertedCountries.find((country) => country.name === 'ES');
+  spain_states.forEach(state => {
+    state.country_id = spain.id;
+  });
+  await knex(tableNames.state).insert(spain_states);
   // Inserts seed entries
   // await knex('table_name').insert([
   //   { id: 1, colName: 'rowValue1' },
